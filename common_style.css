@@ -1,0 +1,80 @@
+/* ページ全体のレイアウト調整 */
+[data-role="header"], [data-role="content"], [data-role="footer"]{
+	width: 50em;
+	margin-left:auto; margin-right:auto;
+}
+
+[data-role="content"]{
+	border-width: 1px;
+	padding: 0;
+}
+
+[data-role="content"] > *{
+	margin:1em 4em;
+}
+
+[data-icon="none"] span.ui-icon{
+	display:none;
+}
+
+/* 個別の部品の調整 */
+#title {
+	margin: 5px 2em;
+	font-size: xx-large;
+	cursor: pointer;
+}
+
+#title > span{
+	margin-left: 10px;
+	font-size: small;
+}
+
+#about{
+	background: whitesmoke;
+}
+
+#template{
+	display: none;
+}
+
+#message{
+	margin-bottom: 1em;
+	padding: 1em;
+}
+
+[name="keyword"]{
+    margin-top: 10px;
+    margin-bottom: 7px;
+}
+
+#rss-icon{
+	margin-left: 1em;
+}
+
+.date{
+	font-size:small;
+}
+
+[data-role="footer"] > div{
+	font-size: small;
+	margin-right: 5em;
+}
+
+[data-role="footer"] > div > p > a{
+	color: #FFFFFF !important;
+	text-decoration: none;
+}
+
+/* その他 */
+.aside{
+	color: gray;
+}
+
+.small-font{
+	font-size: small;
+}
+
+.x-small-font{
+	font-size:x-small;
+}
+

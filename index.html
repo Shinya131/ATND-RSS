@@ -1,182 +1,88 @@
 <!DOCTYPE HTML>
-<html lang="js-JP">
+<html lang="ja-JP">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!---->
+	<!--jQuery & jQuery Mobile-->
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
 	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
 	<script src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
-	<!---->
+	<!--timers-->
 	<script type="text/javascript" src="./jquery.timers.js"></script>
-	<script tyle="text/javascript">
-		$(document).ready(function(){
-			$('#notify').hide();
-			/* Event listeners */
-			$('[name="keyword_textbox"]').keydown(function(e){
-				keyword = $('[name="keyword_textbox"]').val();
-  				if(e.keyCode==13){
-	  				showEvents(keyword);
-  				}
-			});
-			$('#showEvents').bind('tap', function(){
-				keyword = $('[name="keyword_textbox"]').val();
-				showEvents(keyword);
-			});
-			function showEvents(keyword){
-				$('#notify').hide();
-				
-				if(keyword.length > 0){
-					eventRss = new EventRss();
-					eventRss.show(keyword, $('#eventRssView'));
-					
-					eventList = new EventList();
-					eventList.show(keyword, $('#eventListView'));
-				}else{
-					$.mobile.hidePageLoadingMsg();
-					$('#notify').html('<p>何かキーワードを入れてください。</p>');
-					$('#notify').slideDown("slow");
-					$('#notify').oneTime(6000,function(){
-						$('#notify').slideUp("slow");
-						return;
-					});
-				}
-			}
-			/* Prototypes */
-			EventRss = function(){
-				this.show = function(keyword, target_listview){
-					rss_url = "http://api.atnd.org/events/?format=atom&keyword="+ encodeURIComponent(keyword);
-					listView = target_listview
-					listView.empty();
-					listView.append('');
-					listView.append(' \
-						<li data-role="list-divider">「'+keyword+'」に関連する新着イベントのRSS</li> \
-						<li data-icon="none" data-theme="b" > \
-							<a target="_blank" href="'+rss_url+'"> \
-								<img src="./rss_icon.png" id="rss-icon"/><br /> \
-								<u>このリンクをお使いのRSSリーダーへ登録してください。</u> \
-							</a><br /> \
-						</li> \
-					');
-					listView.listview('refresh');
-				}
-			}
-			EventList = function(){
-				this.show = function(keyword, target_listview){
-					$.mobile.showPageLoadingMsg();
-					
-					request_url = "http://api.atnd.org/events?callback=?";
-					$.getJSON(request_url, {format:"jsonp", keyword: keyword} , function(data){
-					
-						listView = target_listview;
-						listView.empty();
-						if(data.results_available > 0){
-							
-							listView.append('<li data-role="list-divider">このRSSにはこんなイベントの情報が配信されます。</li>');
-							for(var i = 0; i < data.results_available; i++){
-								date = data.events[i].started_at.substring(5,7)+'月'+ data.events[i].started_at.substring(8,10)+'日';
-								date = date.replace('0','')
-								listView.append(' \
-									<li data-icon="none"><a target="_blank" href="http://atnd.org/events/'+ data.events[i].event_id +'"> \
-										<span class="ui-li-count">どんなイベントか見る</span> \
-										<span class="small-font">'+ date +'</span> \
-										<span class="small-font">'+ data.events[i].address +'</span>\
-										<h3>' + data.events[i].title + '</h3> \
-										<p>' + data.events[i].catch + '</p></a> \
-									</li> \
-								');
-								listView.listview('refresh');
-								$.mobile.hidePageLoadingMsg();
-							}
-						}else{
-							$.mobile.hidePageLoadingMsg();
-							$('#eventRssView').html("");
-							$('#notify').html("<p>「"+ keyword +"」に関連するイベントは行われていないようです・・・</p>");
-							$('#notify').slideDown("slow");
-							$('#notify').oneTime(6000,function(){
-								$('#notify').slideUp("slow");
-								 return;
-							});
-						}
-					});
-				}
-			}
-		});
-	</script>
-	<style TYPE="text/css">
-		[data-role="header"]{
-			width: 50em;
-			margin-left:auto; margin-right:auto;
-		}
-		#title-box, [data-role="footer"]{
-			padding-left: 3em;
-		}
-		[data-role="content"]{
-			padding: 0;
-			width: 50em;
-			margin-left:auto; margin-right:auto;
-		}
-		#main-content{
-			padding:2em 3em;
-		}
-		[data-icon="none"] span.ui-icon{
-			display:none;
-		}
-		.small-font{
-			font-size:x-small;
-		}
-		#rss-icon{
-			margin:5px;
-			margin-left:14px;
-		}
-	</style>
+	<!--my-->
+	<script type="text/javascript" src="./atndrss.js"></script>
+	<link rel="stylesheet" type="text/css" href="./common_style.css">
 	<title>ATND RSS</title>
 </head>
 <body>
 	<div data-role="page" data-theme="d">
+		
 		<div data-role="header">
-			<div id="title-box" class="ui-body">
-				<h1>ATND RSS<span style="font-size: small;color:#CCCCCC">　アルファ版</span></h1>
-			</div>
+			<div id="title" onclick="document.location.reload(true)">ATND RSS<span>新着イベント情報配信サイト</span></div>
 		</div>
-		<div data-role="content">
-			<div id="main-content" class="ui-body ui-body-d">
-				<!---->
-				<ul data-role="listview" data-inset="true" data-divider-theme="c">
-					<li data-role="list-divider">何についてのイベント情報を受け取りたいですか？</li>
-					<li>
-						<input
-							type="text"
-							name="keyword_textbox"
-							value=""
-							placeholder="キーワードを入れてください" />
-						<div align="right">
-							<a href=""
-								id="showEvents"
-								data-role="button"
-								data-inline="ture"
-								data-icon="search"
-								data-iconpos="right">このキーワードに関連するRSSを探す</a>
-						</div>
-					</li>
-				</ul>
-				<div id="notify" class="ui-body ui-body-e"></div>
-				<!---->
-				<ul data-role="listview" id="eventRssView" data-inset="true" data-divider-theme="c"></ul>
-				<!---->
-				<ul data-role="listview" id="eventListView" data-inset="true" data-divider-theme="c"></ul>
-				<!---->
-				<div class="ui-grid-a">				
-					<div class="ui-body ui-body-c">
-						<h4>このサイトは何？</h4>
-						<p style="font-size:small">"ATND RSS"は、イベント検索サイト「<a href="http://atnd.org/" target="_blank" >ATND</a>」に登録されるイベントの情報をRSSで配信しているサイトです。
-						上の検索ボックスに好きなキーワードを入力してRSSを作成し、Google Readerなどに登録してください。</p>
-						<p style="font-size:small"><a href="http://shinya131.blogspot.com/2012/01/atnd-rssweb.html" target="_blank">さらに詳しく</a></p>
+		
+		<div data-role="content" data-theme="d"><div>
+			
+			<!--検索ボックス-->
+			<ul id="search" data-role="listview" data-inset="true" data-divider-theme="c">
+				
+				<li>
+					<div class="ui-grid-a">
+						<div class="ui-block-a">何のイベントを探しますか？</div>
+						<div class="ui-block-a"><input type="text" name="keyword" value="" placeholder="例）Android 勉強会" /></div>
+						<div class="ui-block-b"><input type="submit" class="btn" value="検索" data-inline="true" data-icon="search"/></div>
 					</div>
-				</div>
+				</li>
+			</ul>
+			
+			<!--メッセージ-->			
+			<div id="message" class="ui-body ui-body-e"></div>
+			
+			<!--情報を受け取る-->
+			<ul id="rss-link" data-role="listview" data-inset="true" data-divider-theme="c">
+				<li data-role="list-divider">「<span class="keyword"></span>」に関連するイベントの新着情報を・・・</li>
+				<li data-icon="none">
+					<a href="">
+						<img src="./rss_icon.png" id="rss-icon"/>
+						<u>RSSで受け取る</u>
+					</a>
+				</li>
+			</ul>
+			
+			<!--イベントの一覧-->
+			<ul id="event-list" data-role="listview" data-inset="true" data-divider-theme="c">
+				<li data-role="list-divider">このRSSにはこんなイベントの情報が配信されます</li>
+				<li id="template" data-icon="none">
+					<a href="" class="link" target="_blank">
+						<span class="date">date</span>
+						<span class="address x-small-font">address</span>
+						<h1 class="title">title</h1>
+						<span class="catch x-small-font">catch</span>
+						<span class="ui-li-count">どんなイベントか見る<img src="./new_win_icon.png"/></span>
+					</a>
+				</li>
+			</ul>
+			
+			<!--サイトの説明-->
+			<div id="about" class="ui-body ui-body-c">
+				<h4>このサイトは何？</h4>
+				<p class="small-font">"ATND RSS"は、イベント検索サイト「<a href="http://atnd.org/" target="_blank" >ATND<img src="./new_win_icon.png"/></a>」に登録されるイベントの情報をRSSで配信しているサイトです。
+				上の検索ボックスに好きなキーワードを入力してRSSを作成し、Google Readerなどに登録してください。</p>
+				<p class="small-font"><a href="http://shinya131.blogspot.com/2012/01/atnd-rssweb.html" target="_blank">さらに詳しく<img src="./new_win_icon.png"/></a></p>
 			</div>
-			<div data-role="footer">
-				<p>&copy; 2012 <a style="color: #FFFFFF" href="https://twitter.com/#!/shinya_131" target="_blank">@Shinya_131</a></p>
+			
+		</div></div>
+		
+		<div data-role="footer">
+			<div align="right">
+				<p>
+					<a href="http://atnd.org/" target="_blank">
+						powerd by ATND<img src="./new_win_icon.png"/>
+					</a>|
+					<a href="https://twitter.com/#!/shinya_131" target="_blank">
+						made by @Shinya_131<img src="./new_win_icon.png"/>
+					</a>
+				</p>
 			</div>
 		</div>
 	</div>
