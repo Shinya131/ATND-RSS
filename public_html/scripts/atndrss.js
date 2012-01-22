@@ -40,7 +40,7 @@ Search = function(text_box_element){
 				}
 			});
 		}else{
-			message.show("何かキーワードを入力して下さい");
+			message.show("何かキーワードを入力して下さい。");
 		}
 	}
 }
