@@ -4,7 +4,23 @@ $(function(){
 	message = new Message($('#message'));
 	eventList = new EventList($("#event-list"));
 	
+	$('[name="keyword"]').keydown(function(e){
+		if(e.keyCode==13){
+			search.doit();
+		}
+	});
+	
 	$('#search .btn').bind('tap', function(){
+		search.doit();
+	});
+});
+
+Search = function(text_box_element){
+	this.text_box_element = text_box_element;
+	this.getKeyword = function(){
+		return this.text_box_element.val();
+	}
+	this.doit = function(){
 		rssLink.element.hide();
 		message.element.hide();
 		eventList.element.hide();
@@ -26,13 +42,6 @@ $(function(){
 		}else{
 			message.show("何かキーワードを入力して下さい");
 		}
-	});
-});
-
-Search = function(text_box_element){
-	this.text_box_element = text_box_element;
-	this.getKeyword = function(){
-		return this.text_box_element.val();
 	}
 }
 
