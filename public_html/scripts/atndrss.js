@@ -10,7 +10,7 @@ $(function(){
 		}
 	});
 	
-	$('#search .btn').bind('tap', function(){
+	$('#search-btn').bind('tap', function(){
 		search.doit();
 	});
 });
