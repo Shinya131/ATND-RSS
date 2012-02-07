@@ -58,6 +58,7 @@
 [data-role="footer"] > div{
 	font-size: small;
 	margin-right: 5em;
+	text-align: right;
 }
 
 [data-role="footer"] > div > p > a{
